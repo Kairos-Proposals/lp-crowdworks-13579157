@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos ご提案 | 縦型サイネージ全画面表示アプリ開発</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void:#080B10;
+    --bg-panel:#11161F;
+    --bg-panel-2:#161D2B;
+    --accent-teal:#00E0B8;
+    --accent-amber:#FF8A4C;
+    --text-main:#E9EDF1;
+    --text-sub:#8A93A3;
+    --border-line: rgba(255,255,255,0.09);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-void);
+    color:var(--text-main);
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight:300;
+    line-height:1.85;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.en-label{
+    font-family:'Space Grotesk', 'Noto Sans JP', sans-serif;
+  }
+  a{color:inherit;}
+  img{max-width:100%;}
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+  .en-label{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:0.28em;
+    color:var(--accent-teal);
+    text-transform:uppercase;
+    margin-bottom:16px;
+    font-weight:600;
+  }
+  section{
+    padding:110px 0;
+    position:relative;
+  }
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:140px 0 100px;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 10%, rgba(0,224,184,0.10), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(255,138,76,0.08), transparent 60%),
+      var(--bg-void);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:48px 48px;
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:60px;
+    align-items:center;
+    width:100%;
+    position:relative;
+    z-index:2;
+  }
+  .kairos-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 16px;
+    border:1px solid var(--border-line);
+    border-radius:100px;
+    font-size:12px;
+    letter-spacing:0.12em;
+    color:var(--text-sub);
+    margin-bottom:34px;
+  }
+  .kairos-tag span{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent-teal);
+    box-shadow:0 0 8px var(--accent-teal);
+  }
+  h1.catch{
+    font-size:clamp(32px, 4.2vw, 52px);
+    font-weight:700;
+    line-height:1.4;
+    letter-spacing:0.01em;
+    margin-bottom:28px;
+  }
+  h1.catch .accent{
+    color:var(--accent-teal);
+  }
+  .hero-sub{
+    color:var(--text-sub);
+    font-size:16px;
+    max-width:480px;
+    margin-bottom:40px;
+  }
+  .btn-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn-primary, .btn-ghost{
+    display:inline-block;
+    padding:16px 32px;
+    border-radius:4px;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-decoration:none;
+    transition:all .25s ease;
+  }
+  .btn-primary{
+    background:var(--accent-teal);
+    color:#06130F;
+  }
+  .btn-primary:hover{ box-shadow:0 0 28px rgba(0,224,184,0.45); transform:translateY(-2px);}
+  .btn-ghost{
+    border:1px solid var(--border-line);
+    color:var(--text-main);
+  }
+  .btn-ghost:hover{border-color:var(--accent-teal); color:var(--accent-teal);}
+
+  /* ---- device comparison visual ---- */
+  .device-compare{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:28px;
+    position:relative;
+  }
+  .device{
+    width:140px;
+    height:290px;
+    border-radius:18px;
+    background:#0D1117;
+    border:2px solid #232B3A;
+    padding:10px 7px;
+    position:relative;
+    box-shadow:0 30px 60px rgba(0,0,0,0.5);
+  }
+  .device .notch{
+    width:30px;height:4px;border-radius:3px;
+    background:#232B3A;
+    margin:0 auto 8px;
+  }
+  .device .screen{
+    width:100%;
+    height:calc(100% - 20px);
+    border-radius:8px;
+    overflow:hidden;
+    position:relative;
+    background:linear-gradient(160deg,#0E2A24,#071A17);
+  }
+  .device.before .urlbar{
+    height:20px;
+    background:#162029;
+    display:flex;
+    align-items:center;
+    padding:0 6px;
+    gap:3px;
+    border-bottom:1px solid #232B3A;
+  }
+  .device.before .urlbar span{
+    width:5px;height:5px;border-radius:50%;
+    background:#3A4454;
+  }
+  .device.before .urlbar .u{
+    flex:1;
+    height:10px;
+    background:#1F2A36;
+    border-radius:3px;
+    margin-left:4px;
+  }
+  .device .content{
+    padding:14px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+  }
+  .device .content .bar{
+    width:70%;
+    height:8px;
+    background:rgba(0,224,184,0.35);
+    border-radius:2px;
+  }
+  .device .content .bar.sm{width:45%; background:rgba(255,138,76,0.3);}
+  .device.after .screen{
+    background:linear-gradient(160deg,#0E2A24,#06201B);
+    box-shadow:inset 0 0 0 2px rgba(0,224,184,0.25);
+  }
+  .device.after::after{
+    content:"⤢";
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-size:22px;
+    color:var(--accent-teal);
+    opacity:0.6;
+  }
+  .arrow-mid{
+    font-size:22px;
+    color:var(--accent-amber);
+  }
+  .compare-caption{
+    position:absolute;
+    bottom:-34px;
+    left:0; right:0;
+    display:flex;
+    justify-content:space-between;
+    padding:0 6px;
+    font-size:11px;
+    color:var(--text-sub);
+    letter-spacing:0.05em;
+  }
+
+  /* ---------- SECTION HEAD COMMON ---------- */
+  .sec-head{ max-width:680px; margin-bottom:60px;}
+  .sec-head h2{
+    font-size:clamp(26px,3vw,36px);
+    font-weight:700;
+    line-height:1.5;
+  }
+  .sec-head p{
+    color:var(--text-sub);
+    margin-top:18px;
+    font-size:15.5px;
+  }
+
+  /* ---------- UNDERSTANDING ---------- */
+  .understand{
+    background:var(--bg-panel);
+    border-top:1px solid var(--border-line);
+    border-bottom:1px solid var(--border-line);
+  }
+  .req-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--border-line);
+    border:1px solid var(--border-line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .req-item{
+    background:var(--bg-panel);
+    padding:32px 26px;
+  }
+  .req-item .mark{
+    font-family:'Space Grotesk';
+    font-size:13px;
+    color:var(--accent-amber);
+    letter-spacing:0.1em;
+    margin-bottom:12px;
+    display:block;
+  }
+  .req-item h3{
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:10px;
+    line-height:1.5;
+  }
+  .req-item p{
+    color:var(--text-sub);
+    font-size:14px;
+  }
+
+  /* ---------- VALUE CARDS ---------- */
+  .value-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+  }
+  .value-card{
+    background:var(--bg-panel-2);
+    border:1px solid var(--border-line);
+    border-radius:12px;
+    padding:34px 30px;
+    position:relative;
+    transition:border-color .25s ease, transform .25s ease;
+  }
+  .value-card:hover{
+    border-color:rgba(0,224,184,0.4);
+    transform:translateY(-4px);
+  }
+  .value-card .num{
+    font-family:'Space Grotesk';
+    font-size:13px;
+    color:var(--accent-teal);
+    letter-spacing:0.15em;
+    margin-bottom:18px;
+    display:block;
+  }
+  .value-card h3{
+    font-size:19px;
+    font-weight:600;
+    margin-bottom:12px;
+  }
+  .value-card p{
+    color:var(--text-sub);
+    font-size:14.5px;
+  }
+  .value-card.wide{ grid-column:1 / -1; }
+
+  /* ---------- PROCESS TIMELINE ---------- */
+  .process{
+    background:var(--bg-panel);
+    border-top:1px solid var(--border-line);
+    border-bottom:1px solid var(--border-line);
+  }
+  .timeline{
+    position:relative;
+    padding-left:36px;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:9px; top:6px; bottom:6px;
+    width:1px;
+    background:linear-gradient(var(--accent-teal), var(--accent-amber));
+    opacity:0.5;
+  }
+  .t-step{
+    position:relative;
+    padding-bottom:50px;
+  }
+  .t-step:last-child{padding-bottom:0;}
+  .t-step::before{
+    content:"";
+    position:absolute;
+    left:-36px; top:3px;
+    width:19px; height:19px;
+    border-radius:50%;
+    background:var(--bg-void);
+    border:2px solid var(--accent-teal);
+  }
+  .t-step .t-label{
+    font-family:'Space Grotesk';
+    font-size:12px;
+    letter-spacing:0.1em;
+    color:var(--accent-amber);
+    margin-bottom:6px;
+    display:block;
+  }
+  .t-step h3{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .t-step p{
+    color:var(--text-sub);
+    font-size:14.5px;
+    max-width:560px;
+  }
+
+  /* ---------- CLOSING ---------- */
+  .closing{
+    text-align:center;
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 0%, rgba(0,224,184,0.10), transparent 60%),
+      var(--bg-void);
+  }
+  .closing .sec-head{ margin:0 auto 40px; text-align:center;}
+  .closing .sec-head p{ margin-left:auto; margin-right:auto;}
+  .signage-strip{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:40px 0 46px;
+  }
+  .signage-strip .px{
+    width:6px; height:46px;
+    border-radius:3px;
+    background:linear-gradient(var(--accent-teal), transparent);
+    opacity:0.6;
+  }
+  .signage-strip .px:nth-child(even){
+    background:linear-gradient(var(--accent-amber), transparent);
+    height:30px;
+    align-self:flex-end;
+  }
+  footer{
+    padding:34px 0;
+    text-align:center;
+    color:var(--text-sub);
+    font-size:12.5px;
+    border-top:1px solid var(--border-line);
+  }
+
+  @media (max-width: 880px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .device-compare{ transform:scale(0.9); }
+    .req-grid{ grid-template-columns:1fr; }
+    .value-grid{ grid-template-columns:1fr; }
+    section{ padding:80px 0; }
+  }
+  @media (max-width:480px){
+    .device{ width:110px; height:230px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kairos-tag"><span></span>KAIROS からのご提案</div>
+      <h1 class="catch">画面は、何も語らない。<br>ただ、<span class="accent">映すべきもの</span>だけを<br>映し続ける。</h1>
+      <p class="hero-sub">
+        縦型デジタルサイネージ専用。URLを指定するだけで全画面表示になり、
+        タッチ誤操作・ホーム遷移を防ぐAndroidアプリを、Kairosが開発します。
+      </p>
+      <div class="btn-row">
+        <a href="#closing" class="btn-primary">見積もり・ご相談はこちら</a>
+        <a href="#value" class="btn-ghost">提供できる価値を見る</a>
+      </div>
+    </div>
+    <div>
+      <div class="device-compare">
+        <div class="device before">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="urlbar"><span></span><span></span><span></span><div class="u"></div></div>
+            <div class="content">
+              <div class="bar"></div>
+              <div class="bar sm"></div>
+            </div>
+          </div>
+        </div>
+        <div class="arrow-mid">→</div>
+        <div class="device after">
+          <div class="notch" style="opacity:0;"></div>
+          <div class="screen">
+            <div class="content">
+              <div class="bar"></div>
+              <div class="bar sm"></div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-caption">
+          <span>URL入力</span><span>全画面固定表示</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNDERSTANDING -->
+<section class="understand">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="en-label">Understanding</span>
+      <h2>「表示専用」であることの難しさを、<br>私たちは理解しています。</h2>
+      <p>
+        サイネージ用アプリは機能を増やすことより、“余計なことをさせない”設計が命です。
+        タッチでの誤操作を防ぎつつ、現場ではリモコンで確実にホームへ戻せる。
+        電源が落ちても、何事もなかったように自動で画面が立ち上がる。
+        そんな「静かに、確実に動き続けるアプリ」こそ、今回のご依頼の本質だと捉えています。
+      </p>
+    </div>
+    <div class="req-grid">
+      <div class="req-item">
+        <span class="mark">01 / TOUCH</span>
+        <h3>タッチ操作での解除は不可</h3>
+        <p>画面を触っても遷移・解除が起きない、誤操作に強いKioskモードを実装します。</p>
+      </div>
+      <div class="req-item">
+        <span class="mark">02 / REMOTE</span>
+        <h3>リモコンのみホーム復帰</h3>
+        <p>ホームへの復帰はリモコン操作に限定し、現場運用者の意図通りの制御を実現します。</p>
+      </div>
+      <div class="req-item">
+        <span class="mark">03 / SIMPLE</span>
+        <h3>仕様はこれから、一緒に固める</h3>
+        <p>仕様書・サーバー・デザイン未確定の状態からでも、要件を整理しながら伴走します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE -->
+<section id="value">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="en-label">What We Provide</span>
+      <h2>Kairosが提供できる価値</h2>
+      <p>縦型サイネージ事業の立ち上げフェーズに必要な「アプリの土台」を、過不足なく形にします。</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <span class="num">01</span>
+        <h3>URL指定・全画面WebView</h3>
+        <p>指定したURL（縦型サイネージ専用HP）をブラウザUIなしで全画面表示。ステータスバー・ナビゲーションバーも非表示にします。</p>
+      </div>
+      <div class="value-card">
+        <span class="num">02</span>
+        <h3>Kioskモードによる誤操作防止</h3>
+        <p>タッチでの画面遷移・アプリ離脱・通知表示をブロックし、設置現場での「触られても壊れない」安定運用を実現します。</p>
+      </div>
+      <div class="value-card">
+        <span class="num">03</span>
+        <h3>リモコン操作の個別制御</h3>
+        <p>戻る・ホームキーの挙動をアプリ側で定義し、リモコンからのみホーム画面に戻せる仕組みを構築します。</p>
+      </div>
+      <div class="value-card">
+        <span class="num">04</span>
+        <h3>自動起動・自己復帰</h3>
+        <p>端末の電源断・再起動後も自動でアプリが立ち上がり、設定した画面がそのまま再表示される運用設計にします。</p>
+      </div>
+      <div class="value-card wide">
+        <span class="num">05</span>
+        <h3>未確定事項の整理から伴走</h3>
+        <p>仕様書・サーバー構成・デザインが「相談して決めたい」状態でも問題ありません。要件ヒアリングを通じて実装に必要な仕様を一緒に言語化し、将来的な複数台展開や機能拡張も見据えた構成をご提案します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="en-label">Process</span>
+      <h2>進め方・スケジュールイメージ</h2>
+      <p>納期・仕様が未確定な状態からでも、最短ルートで実機検証まで進められる流れをご用意しています。</p>
+    </div>
+    <div class="timeline">
+      <div class="t-step">
+        <span class="t-label">STEP 01</span>
+        <h3>ヒアリング・要件整理（1〜3日）</h3>
+        <p>対象端末・OSバージョン、ネットワーク環境、表示するURLの構成、リモコンの種類などを確認し、仕様を固めます。</p>
+      </div>
+      <div class="t-step">
+        <span class="t-label">STEP 02</span>
+        <h3>設計・開発（1〜2週間）</h3>
+        <p>全画面WebView表示、Kioskモード、リモコン制御、自動起動処理を実装します。</p>
+      </div>
+      <div class="t-step">
+        <span class="t-label">STEP 03</span>
+        <h3>実機検証（3〜5日）</h3>
+        <p>実際のサイネージ端末・リモコンで動作確認を行い、タッチ無効化や復帰挙動を調整します。</p>
+      </div>
+      <div class="t-step">
+        <span class="t-label">STEP 04</span>
+        <h3>納品・運用サポート</h3>
+        <p>APKの納品と設置手順のご案内まで対応します。複数台展開のご相談も承ります。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing" id="closing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="en-label">Next Action</span>
+      <h2>仕様はこれからで構いません。<br>まずはお話しさせてください。</h2>
+      <p>
+        タッチパネル搭載サイネージ事業の立ち上げ、Kairosがアプリ面からお手伝いします。
+        ご不明点・ご要望があれば、お気軽にメッセージをお送りください。
+      </p>
+    </div>
+    <div class="signage-strip">
+      <div class="px"></div><div class="px"></div><div class="px"></div>
+      <div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+    </div>
+    <a href="#" class="btn-primary">Kairosに見積もり相談する</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Kairos — Web制作・システム開発チーム ｜ ご提案 for wave096 様
+  </div>
+</footer>
+
+</body>
+</html>
